@@ -1,19 +1,28 @@
 import 'package:flutter/material.dart';
-import 'package:spoopy_find/screens/home_screen.dart';
-//import 'screens/home_screen.dart';
+import 'package:spoopy_find/theme/app_theme.dart';
+import 'package:spoopy_find/screens/home.dart';
+//import 'screens/home.dart'
+//import 'app_theme/app_theme.dart';
 
 void main() {
-  runApp(const SpoopyFindApp());
+  runApp(const MyApp());
 }
 
-class SpoopyFindApp extends StatelessWidget {
-  const SpoopyFindApp({super.key});
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      title: 'SpoopyFind',
-      home: HomeScreen(),
+    return MaterialApp(
+      title: 'Spooky Find',
+      debugShowCheckedModeBanner: false,
+      
+      // Wire up custom themes
+      theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
+      themeMode: ThemeMode.system, 
+      
+      home: const HomeScreen(),
     );
   }
 }

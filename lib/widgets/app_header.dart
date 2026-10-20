@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class AppHeader extends StatelessWidget implements PreferredSizeWidget {
     final String title;
@@ -11,10 +12,30 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
 
     @override
     Widget build(BuildContext context) {
+      final colorScheme = Theme.of(context).colorScheme;
+
         return AppBar (
-            title: Row(
-                children: [
-                    Icon(Icons.hourglass_bottom_outlined), //Placeholder
+          centerTitle: true,
+            title: Stack(
+              alignment: Alignment.center,
+              children: [
+                Transform.translate(
+                  offset: const Offset(-100,0),
+                  child: SvgPicture.asset(
+                    'assets/icons/home/cat_icon.svg',
+                    width: 48,
+                    height: 48,
+                    fit: BoxFit.contain,
+                    colorFilter: ColorFilter.mode(
+                      colorScheme.onSurface,
+                      BlendMode.srcIn
+                    ),
+                  ),
+                ),
+                  //Header Icon Rendering
+
+                  const SizedBox(width: 8),
+                  Text(title),
                 ],
             ),
         );
