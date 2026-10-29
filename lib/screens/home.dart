@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:spoopy_find/widgets/widgets.dart'; //Barrel File Import
 
 
@@ -32,7 +33,11 @@ class HomeScreen extends StatelessWidget {
               items: _scareLevels,
             ),
             const SizedBox(height: 40),
-            const MapPlaceholder(),
+
+            const SpookyMap(
+              mapCenter: LatLng(39.608805, -105.019883),
+            ),
+
             const SizedBox(height: 24),
             // 3. Camera & Gallery Action Row (Lesson A Placeholders)
             Row(
