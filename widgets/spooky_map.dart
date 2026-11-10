@@ -8,10 +8,16 @@ class SpookyMap extends StatelessWidget {
 //  final LatLng initialCenter; //Added code because homeBase breaks
   
 
-  const SpookyMap({super.key, this.attractions = const []});
+  const SpookyMap({
+    super.key,
+    this.attractions = const [],
+    this.userLocation,
+  });
 
   // The haunts to pin on the map. The home screen passes these in.
   final List<Attraction> attractions;
+  // Where the user is, or null if we don't know (yet, or at all)
+  final LatLng? userLocation;
 
   // Home base: where the map starts. Replace with your school's coordinates.
   static const LatLng homeBase = LatLng(39.608528, -105.019045);
@@ -28,6 +34,8 @@ class SpookyMap extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final colorScheme = Theme.of(context).colorScheme;
+    // Center on the user if we know where they are; otherwise fall back to home base
+    final LatLng center = userLocation ?? homeBase;
 
     return Container(
       height: 300,
@@ -41,6 +49,8 @@ class SpookyMap extends StatelessWidget {
         ),
       ),
       child: FlutterMap(
+        // A new center means a new key, so Flutter builds a fresh map that starts there
+        key: ValueKey(center),
         options: MapOptions(
 //          initialCenter: initialCenter,
           initialZoom: 13,
@@ -82,6 +92,33 @@ class SpookyMap extends StatelessWidget {
                 ),
             ],
           ),
+           // The "you are here" dot, drawn above the haunt pins. Only shown when we know where the user is.
+          if (userLocation != null)
+            MarkerLayer(
+              markers: [
+                Marker(
+                  point: userLocation!,
+                  width: 32,
+                  height: 32,
+                  child: Tooltip(
+                    message: 'You are here',
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: colorScheme.tertiary, // A different color from the haunt pins
+                        shape: BoxShape.circle,
+                        border: Border.all(width: 3, color: colorScheme.surface),
+                      ),
+                      child: Icon(
+                        Icons.person,
+                        color: colorScheme.onTertiary,
+                        size: 18,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            
           const SimpleAttributionWidget(
             source: Text('OpenStreetMap contributors'),
           ),
