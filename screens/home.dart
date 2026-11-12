@@ -5,6 +5,7 @@ import 'package:flutter_svg/svg.dart';
 import '../view_models/attractions_view_model.dart';
 import '../view_models/location_view_model.dart';
 import '../widgets/widgets.dart';
+import '../models/attraction.dart';
 
 
 class HomeScreen extends StatefulWidget {
@@ -39,6 +40,15 @@ class _HomeScreenState extends State<HomeScreen> {
     _viewModel.dispose(); // The screen is gone, so stop listening for changes
     _locationViewModel.dispose();
     super.dispose();
+  }
+  
+   // Slides the details popup up from the bottom of the screen
+  void _showDetails(Attraction attraction) {
+    showModalBottomSheet(
+      context: context,
+      showDragHandle: true, // The little bar at the top: drag it down to close
+      builder: (context) => HauntDetailsSheet(attraction: attraction),
+    );
   }
 
   @override
@@ -94,6 +104,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 SpookyMap(
                   attractions: visible,
                   userLocation: _locationViewModel.userLocation,
+                  onAttractionTapped: _showDetails,
                 ),
                 const SizedBox(height: 24),
                 // 3. Camera & Gallery Action Row (Lesson A Placeholders)
