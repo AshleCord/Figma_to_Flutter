@@ -6,6 +6,8 @@ import '../view_models/attractions_view_model.dart';
 import '../view_models/location_view_model.dart';
 import '../widgets/widgets.dart';
 import '../models/attraction.dart';
+import '../view_models/photos_view_model.dart';
+import 'camera_screen.dart';
 
 
 class HomeScreen extends StatefulWidget {
@@ -26,6 +28,7 @@ class _HomeScreenState extends State<HomeScreen> {
   // Created once, when the screen first appears, and kept between rebuilds
   final AttractionsViewModel _viewModel = AttractionsViewModel();
   final LocationViewModel _locationViewModel = LocationViewModel();
+  final PhotosViewModel _photosViewModel = PhotosViewModel(); // Shared by the camera and the gallery
 
   @override
   void initState() {
@@ -33,12 +36,14 @@ class _HomeScreenState extends State<HomeScreen> {
     // No await: the screen draws right away, and the pins appear when the haunts arrive
     _viewModel.loadAttractions();
     _locationViewModel.findUser(); // Runs at the same time as loading the haunts
+    _photosViewModel.loadPhotos(); // The photos saved last time
   }
 
   @override
   void dispose() {
     _viewModel.dispose(); // The screen is gone, so stop listening for changes
     _locationViewModel.dispose();
+    _photosViewModel.dispose();
     super.dispose();
   }
   
@@ -48,6 +53,16 @@ class _HomeScreenState extends State<HomeScreen> {
       context: context,
       showDragHandle: true, // The little bar at the top: drag it down to close
       builder: (context) => HauntDetailsSheet(attraction: attraction),
+      
+    );
+  }
+
+    // Slides the camera screen in. The back arrow comes back here.
+  void _openCamera() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => CameraScreen(photosViewModel: _photosViewModel),
+      ),
     );
   }
 
@@ -112,19 +127,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     IconButton(
-                      onPressed: () {},
+                      onPressed: _openCamera,
+                      tooltip: 'Take a photo', // Also read by screen readers
                       icon: SvgPicture.asset(
                         'assets/icons/home/camera.svg',
-                        colorFilter: ColorFilter.mode(
-                          colorScheme.secondary, // The color token
-                          BlendMode.srcIn,       // Replaces all colored vector paths with the token color
-                        ),
-                      ),
-                    ),
-                    IconButton(
-                      onPressed: () {},
-                      icon: SvgPicture.asset(
-                        'assets/icons/home/gallery.svg',
                         colorFilter: ColorFilter.mode(
                           colorScheme.secondary, // The color token
                           BlendMode.srcIn,       // Replaces all colored vector paths with the token color
