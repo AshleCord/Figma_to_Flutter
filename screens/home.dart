@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
-//import 'package:latlong2/latlong.dart';
-//import 'package:spoopy_find/widgets/widgets.dart'; //Barrel File Import
+import 'package:flutter_svg/flutter_svg.dart';
+import '../models/attraction.dart';
 import '../view_models/attractions_view_model.dart';
 import '../view_models/location_view_model.dart';
-import '../widgets/widgets.dart';
-import '../models/attraction.dart';
 import '../view_models/photos_view_model.dart';
+import '../widgets/widgets.dart';
 import 'camera_screen.dart';
-
+import 'gallery_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -46,22 +44,29 @@ class _HomeScreenState extends State<HomeScreen> {
     _photosViewModel.dispose();
     super.dispose();
   }
-  
-   // Slides the details popup up from the bottom of the screen
+
+  // Slides the details popup up from the bottom of the screen
   void _showDetails(Attraction attraction) {
     showModalBottomSheet(
       context: context,
       showDragHandle: true, // The little bar at the top: drag it down to close
       builder: (context) => HauntDetailsSheet(attraction: attraction),
-      
     );
   }
 
-    // Slides the camera screen in. The back arrow comes back here.
+  // Slides the camera screen in. The back arrow comes back here.
   void _openCamera() {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => CameraScreen(photosViewModel: _photosViewModel),
+      ),
+    );
+  }
+
+  void _openGallery() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => GalleryScreen(photosViewModel: _photosViewModel),
       ),
     );
   }
@@ -75,7 +80,7 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: const AppHeader(
         title: 'Spooky Find',
       ),
-      // Rebuilds everything inside whenever the ViewModel calls notifyListeners()
+      // Rebuilds everything inside whenever EITHER ViewModel calls notifyListeners()
       body: ListenableBuilder(
         listenable: Listenable.merge([_viewModel, _locationViewModel]),
         builder: (context, child) {
@@ -108,7 +113,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     'Showing ${visible.length} of ${_viewModel.attractions.length} haunts',
                     style: textTheme.bodyMedium,
                   ),
-                  if (_locationViewModel.isLocating)
+                if (_locationViewModel.isLocating)
                   Text('Finding your location…', style: textTheme.bodySmall)
                 else if (_locationViewModel.problem != null)
                   Text(
@@ -122,7 +127,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   onAttractionTapped: _showDetails,
                 ),
                 const SizedBox(height: 24),
-                // 3. Camera & Gallery Action Row (Lesson A Placeholders)
+                // 3. Camera & Gallery Action Row
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
@@ -131,6 +136,17 @@ class _HomeScreenState extends State<HomeScreen> {
                       tooltip: 'Take a photo', // Also read by screen readers
                       icon: SvgPicture.asset(
                         'assets/icons/home/camera.svg',
+                        colorFilter: ColorFilter.mode(
+                          colorScheme.secondary, // The color token
+                          BlendMode.srcIn,       // Replaces all colored vector paths with the token color
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: _openGallery,
+                      tooltip: 'Photo gallery',
+                      icon: SvgPicture.asset(
+                        'assets/icons/home/gallery.svg',
                         colorFilter: ColorFilter.mode(
                           colorScheme.secondary, // The color token
                           BlendMode.srcIn,       // Replaces all colored vector paths with the token color

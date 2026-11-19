@@ -40,6 +40,22 @@ class PhotosViewModel extends ChangeNotifier {
       return true;
     } catch (error) {
       return false;
+
+    }
+    
+  }
+
+    // Deletes a photo. Returns true if it was deleted.
+  Future<bool> deletePhoto(Photo photo) async {
+    try {
+      await _repository.deletePhoto(photo);
+      _photos.remove(photo);
+      notifyListeners(); // Every screen showing photos redraws without it
+      return true;
+    } catch (error) {
+      return false;
     }
   }
+  
+  
 }
